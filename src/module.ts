@@ -1,36 +1,40 @@
-import { ModuleConfig } from "./interfaces";
 import { BASE_PARAMETERS_REGEX } from "./sentence";
+import { ModuleConfig, Feature } from "./interfaces";
+import { readYaml } from "./reader";
 
 export function Module(params: ModuleConfig) {
-    const stepsDefinitions = stepsToList(params.steps);
+    const stepsDefinitions = readYaml(params.stepsPath);
 
-    async function run() {
-        for await (const stepDefinition of stepsDefinitions) {
-            const currentDef = params.declarations.find((s) => s.definition.test(stepDefinition.definition));
+    // console.log(JSON.stringify(stepsDefinitions))
 
-            if (currentDef) {
-                const params = getParameters(stepDefinition.definition, currentDef.definition);
-                await runFn(currentDef.cb, params?.slice(1) || []);
-            } else {
-                let message = '';
-                if (params.name) {
-                    message += `Current module '${params.name}'. `
+    return { run: () => run(stepsDefinitions, params) };
+}
+
+async function run(features: Feature[], params: ModuleConfig) {
+    for (const feature of features) {
+        for (const Scenario of feature.Feature.Scenarios) {
+            for await (const Step of Scenario.Steps) {
+                const sentencePhrase = Step.Given || Step.Then || Step.When || Step.And || '';
+                const currentDef = params.declarations.find(s => s.definition.test(sentencePhrase));
+    
+                if (currentDef) {
+                    const params = getParameters(sentencePhrase, currentDef.definition);
+                    await runFn(currentDef.cb, params?.slice(1) || [], {sentencePhrase});
+                } else {
+                    let message = '';
+                    if (params.name) {
+                        message += `Current module '${params.name}'.\n`
+                    }
+                    if (Scenario.Name) {
+                        message += `Current Scenario: ${Scenario.Name || 'Not specified'}\n`
+                    }
+                    message += `No definition found for: ${sentencePhrase}`
+    
+                    throw new Error(message);
                 }
-                message += `No definition found for: ${stepDefinition.definition}`
-
-                throw new Error(message);
             }
         }
     }
-
-    return { run };
-}
-
-function stepsToList(steps: string): { definition: string }[] {
-    return steps.split('\n')
-        .map(s => s.trim())
-        .filter(s => s)
-        .map(s => ({ definition: s }));
 }
 
 function getParameters(definition: string, definitionSentence: RegExp): (string | number)[] {
@@ -46,9 +50,9 @@ function getParameters(definition: string, definitionSentence: RegExp): (string 
     }) || [];
 }
 
-async function runFn(cb: Function, params: any[]): Promise<boolean> {
+async function runFn(cb: Function, params: any[], extra?: { sentencePhrase: string }): Promise<boolean> {
     if (typeof cb === 'function') {
         return await cb.call({}, ...params);
     }
-    return false;
+    throw new Error(extra && extra.sentencePhrase ? `The ${extra.sentencePhrase} definition does not have a function` : 'There is a definition without function');
 }

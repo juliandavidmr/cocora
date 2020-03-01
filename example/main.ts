@@ -1,8 +1,7 @@
 import { Module } from "../src";
-import StepsDefinitions from "./definitions";
 import CaseA from "./openWindow.step";
 import CaseB from "./closeWindow.step";
-import { HelloWord, ShowNumber, MultipleParams } from "./helloWord.step";
+import { HelloWord, ShowNumber, MultipleParams, GooglePage, ClickSearchButton, SearchBox, Metioned } from "./helloWord.step";
 
 Module({
     name: 'Scenario 1',
@@ -11,7 +10,11 @@ Module({
         CaseB,
         HelloWord,
         MultipleParams,
-        ShowNumber
+        ShowNumber,
+        GooglePage,
+        SearchBox,
+        ClickSearchButton,
+        Metioned
     ],
-    steps: StepsDefinitions
+    stepsPath: './steps.yml'
 }).run();

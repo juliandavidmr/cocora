@@ -10,8 +10,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/js-yaml": "^3.12.2",
     "@types/node": "^13.7.7",
     "ts-node": "^8.6.2",
     "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "js-yaml": "^3.13.1"
   }
 }
