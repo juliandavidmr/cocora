@@ -1,20 +1,26 @@
 - Feature:
     Name: Feature 1
     Scenarios:
-    # - Name: Scenario 1
-    #   Steps:
-    #   - Given: 'Open window'
-    #   - Then: 'Hello "Julian"'
-    #   - Then: 'My age is 25 years old'
-    #   - When: '"sum" 4 witdh 6'
-    #   - Then: '"sum" 1000000 with 1'
-    #   - Then: '"subs" 1 with 2'
-    #   - Then: Close window
-    #   data: []
+    - Name: Scenario 1
+      Steps:
+      - Given: 'Open window'
+      - Then: 'Hello "Julian"'
+      - Then: 'My age is 25 years old'
+      - When: '"sum" 4 witdh 6'
+      - Then: '"sum" 1000000 with 1'
+      - Then: '"subs" 1 with 2'
+      - Then: Close window
+      data: []
     - Name: Scenario 2
       Steps:
       - Given: that I have gone to the Google page
       - When: 'I add "cats" to the search box'
       - And: click the Search Button
       - Then: '"cats" should be mentioned in the results'
-      data: []
+      - Then: 'Get <Column A> and show'
+      - Then: 'Get <Column C> and show'
+      - Then: 'Get <Column B> and show'
+      Examples: |
+        Column A      &     Column B    &     Column C
+        Data A1       &     Data B1     &     Data C1
+        Data A2       &     Data B2     &     Data C2

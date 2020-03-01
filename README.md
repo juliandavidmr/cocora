@@ -92,7 +92,7 @@ Report
 
 ## TODO
 
-- [ ] Process custom input data
+- [x] Process custom input data (Examples)
 - [ ] Support for Float and regular expressions
 - [ ] Support condditions
 - [x] Generate report

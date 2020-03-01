@@ -5,7 +5,7 @@ export interface SentenceReturn {
 }
 
 export interface SentenceConfig {
-
+    timeout?: number
 }
 
 export interface ModuleConfig {
@@ -14,6 +14,7 @@ export interface ModuleConfig {
     stepsPath: string
     verbose?: boolean
     continueOnError?: boolean;
+    timeout?: number
 }
 
 export interface Feature {
@@ -26,7 +27,7 @@ export interface Feature {
 interface Scenario {
     Name: string;
     Steps: Step[]
-    data: any[]
+    Examples: string;
 }
 
 interface Step {

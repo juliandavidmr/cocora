@@ -47,3 +47,7 @@ export const ClickSearchButton = Then('click the Search Button', {}, async () =>
 export const Metioned = Then('{string} should be mentioned in the results', {}, async (search: string) => {
     console.log(`The word ${search} appears`);
 })
+
+export const DataFromExample = Then('Get {string} and show', {}, async (search: string) => {
+    console.log(`Print ${search}`);
+})
