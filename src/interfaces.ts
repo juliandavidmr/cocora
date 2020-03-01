@@ -12,6 +12,8 @@ export interface ModuleConfig {
     name?: string
     declarations: SentenceReturn[]
     stepsPath: string
+    verbose?: boolean
+    continueOnError?: boolean;
 }
 
 export interface Feature {

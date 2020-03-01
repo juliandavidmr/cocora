@@ -16,5 +16,6 @@ Module({
         ClickSearchButton,
         Metioned
     ],
-    stepsPath: './steps.yml'
+    stepsPath: './steps.yml',
+    continueOnError: false
 }).run();

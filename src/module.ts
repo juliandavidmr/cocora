@@ -3,6 +3,8 @@ import { ModuleConfig, Feature } from "./interfaces";
 import { readYaml } from "./reader";
 
 export function Module(params: ModuleConfig) {
+    params = { verbose: true, continueOnError: false, ...params };
+
     const stepsDefinitions = readYaml(params.stepsPath);
 
     // console.log(JSON.stringify(stepsDefinitions))
@@ -12,27 +14,61 @@ export function Module(params: ModuleConfig) {
 
 async function run(features: Feature[], params: ModuleConfig) {
     for (const feature of features) {
-        for (const Scenario of feature.Feature.Scenarios) {
-            for await (const Step of Scenario.Steps) {
-                const sentencePhrase = Step.Given || Step.Then || Step.When || Step.And || '';
-                const currentDef = params.declarations.find(s => s.definition.test(sentencePhrase));
-    
-                if (currentDef) {
-                    const params = getParameters(sentencePhrase, currentDef.definition);
-                    await runFn(currentDef.cb, params?.slice(1) || [], {sentencePhrase});
-                } else {
-                    let message = '';
-                    if (params.name) {
-                        message += `Current module '${params.name}'.\n`
+        let scenariosExecuted = 0;
+        let stepsExecuted = 0;
+        try {
+            for (const Scenario of feature.Feature.Scenarios) {
+                scenariosExecuted++;
+                for await (const Step of Scenario.Steps) {
+                    try {
+                        const sentencePhrase = Step.Given || Step.Then || Step.When || Step.And || '';
+                        const currentDef = params.declarations.find(s => s.definition.test(sentencePhrase));
+
+                        if (currentDef) {
+                            const params = getParameters(sentencePhrase, currentDef.definition);
+                            await runFn(currentDef.cb, params?.slice(1) || [], { sentencePhrase });
+                            stepsExecuted++;
+                        } else {
+                            let message = '';
+                            if (params.name) {
+                                message += `Current module '${params.name}'.\n`
+                            }
+                            if (Scenario.Name) {
+                                message += `Current Scenario: ${Scenario.Name || 'Not specified'}\n`
+                            }
+                            message += `No definition found for: ${sentencePhrase}`
+
+                            throw new Error(message);
+                        }
+                    } catch (error) {
+                        if (!params.continueOnError) {
+                            throw error;
+                        }
                     }
-                    if (Scenario.Name) {
-                        message += `Current Scenario: ${Scenario.Name || 'Not specified'}\n`
-                    }
-                    message += `No definition found for: ${sentencePhrase}`
-    
-                    throw new Error(message);
                 }
             }
+        } catch (error) {
+            if (!params.continueOnError) {
+                throw error;
+            }
+        } finally {
+            const totalSteps = feature.Feature.Scenarios.map(s => s.Steps.length).reduce((a, b) => a + b)
+
+            const report = {
+                scenariosExecuted,
+                stepsExecuted,
+                totalSteps,
+                success: (totalSteps - stepsExecuted) === 0
+            }
+
+            if (params.verbose) {
+                console.info('\nReport');
+                console.info('- State:', report.success ? 'Success' : 'Failed');
+                console.info('- Scenarios executed:', scenariosExecuted);
+                console.info('- Steps executed:', stepsExecuted, `/`, totalSteps);
+            }
+
+            return report;
         }
     }
 }

@@ -10,7 +10,7 @@ function wait(time: number) {
 
 export const HelloWord = Sentence('Hello {string}', {}, async (name: string) => {
     console.log(`Start!`);
-    await wait(3000);
+    await wait(1000);
     console.log(`End!`);
     console.log(`Hello ${name}!`);
 })

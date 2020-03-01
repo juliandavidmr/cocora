@@ -81,6 +81,11 @@ Go to Google page
 Type cats in the search box
 Click on the search button
 The word cats appears
+
+Report
+- State: Success
+- Scenarios executed: 1
+- Steps executed: 4 / 4
 ```
 
 ## API
@@ -90,7 +95,7 @@ The word cats appears
 - [ ] Process custom input data
 - [ ] Support for Float and regular expressions
 - [ ] Support condditions
-- [ ] Generate report
+- [x] Generate report
 - [ ] Hook support
 - [ ] Support extensions
 - [ ] Create CLI
