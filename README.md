@@ -35,7 +35,9 @@ Cocora is inspired by Cucumber, has similarities in the definition format of Sce
 ```ts
 // declarations.steps.ts
 
-const GooglePage = Then('that I have gone to the Google page', {}, async () => {
+import { Then, Given } from "../src";
+
+const GooglePage = Given('that I have gone to the Google page', {}, async () => {
     console.log('Go to Google page');
     await wait(1000);
 })
@@ -64,7 +66,7 @@ import { Module } from "cocora";
 import { GooglePage, ClickSearchButton, SearchBox, Metioned } from "./declarations.steps.ts";
 
 Module({
-    name: 'Scenario 1',
+    name: 'Module A',
     declarations: [ GooglePage, SearchBox, ClickSearchButton, Metioned ],
     stepsPath: './steps.yml'
 }).run();
@@ -81,10 +83,13 @@ Click on the search button
 The word cats appears
 ```
 
+## API
+
 ## TODO
 
 - [ ] Process custom input data
 - [ ] Support for Float and regular expressions
+- [ ] Support condditions
 - [ ] Generate report
 - [ ] Hook support
 - [ ] Support extensions

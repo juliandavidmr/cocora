@@ -1,4 +1,4 @@
-import { Sentence, Then } from "../src";
+import { Sentence, Then, Given } from "../src";
 
 function wait(time: number) {
     return new Promise((resolve) => {
@@ -31,7 +31,7 @@ export const MultipleParams = Then('{string} {number} with {number}', {}, (op: s
     }
 })
 
-export const GooglePage = Then('that I have gone to the Google page', {}, async () => {
+export const GooglePage = Given('that I have gone to the Google page', {}, async () => {
     console.log('Go to Google page');
     await wait(1000);
 })

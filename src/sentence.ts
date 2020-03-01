@@ -11,6 +11,7 @@ export function Sentence(definition: string, config: SentenceConfig, cb: Functio
 export const When = Sentence;
 export const Given = Sentence;
 export const Then = Sentence;
+export const And = Sentence;
 
 /** ------------------- Utils -------------------- */
 

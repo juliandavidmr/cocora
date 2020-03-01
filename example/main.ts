@@ -4,7 +4,7 @@ import CaseB from "./closeWindow.step";
 import { HelloWord, ShowNumber, MultipleParams, GooglePage, ClickSearchButton, SearchBox, Metioned } from "./helloWord.step";
 
 Module({
-    name: 'Scenario 1',
+    name: 'Module A',
     declarations: [
         CaseA,
         CaseB,
