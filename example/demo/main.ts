@@ -1,4 +1,4 @@
-import { Module } from "../src";
+import { Module } from "../../src";
 import CaseA from "./openWindow.step";
 import CaseB from "./closeWindow.step";
 import { HelloWord, ShowNumber, MultipleParams, GooglePage, ClickSearchButton, SearchBox, Metioned, DataFromExample } from "./helloWord.step";

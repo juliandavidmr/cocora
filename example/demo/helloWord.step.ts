@@ -1,4 +1,4 @@
-import { Sentence, Then, Given } from "../src";
+import { Sentence, Then, Given } from "../../src";
 
 function wait(time: number) {
     return new Promise((resolve) => {

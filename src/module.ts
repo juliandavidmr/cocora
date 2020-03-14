@@ -2,6 +2,7 @@ import { BASE_PARAMETERS_REGEX, EXPRESSIONS } from "./sentence";
 import { ModuleConfig, Feature } from "./interfaces";
 import { readYaml } from "./reader";
 import { Example } from "./example";
+import chalk from 'chalk';
 
 export function Module(params: ModuleConfig) {
 	params = { verbose: true, continueOnError: false, ...params };
@@ -24,7 +25,7 @@ async function run(features: Feature[], params: ModuleConfig) {
 				const ScenarioExample = new Example(Scenario.Examples);
 				examplesCount = ScenarioExample.length;
 				for (let i = 0; i < ScenarioExample.length; i++) {
-					console.log();
+					console.log(); // Print enter
 					for await (const Step of Scenario.Steps) {
 						try {
 							let sentencePhrase = Step.Given || Step.Then || Step.When || Step.And || '';
@@ -35,6 +36,7 @@ async function run(features: Feature[], params: ModuleConfig) {
 								const params = getParameters(sentencePhrase, currentDef.definition);
 								await runFn(currentDef.cb, params?.slice(1) || [], { sentencePhrase });
 								stepsExecuted++;
+								console.log(chalk.green(sentencePhrase));
 							} else {
 								let message = '';
 								if (params.name) {
@@ -70,8 +72,8 @@ async function run(features: Feature[], params: ModuleConfig) {
 			}
 
 			if (params.verbose) {
-				console.info('\nReport');
-				console.info('- State:', report.success ? 'Success' : 'Fail');
+				console.info(chalk.underline('\nReport:'));
+				console.info('- State:', report.success ? chalk.green('Success') : chalk.red('Fail'));
 				console.info('- Scenarios executed:', scenariosExecuted);
 				console.info('- Steps executed:', (stepsExecuted / examplesCount), `/`, totalSteps);
 			}
@@ -83,7 +85,7 @@ async function run(features: Feature[], params: ModuleConfig) {
 
 function replaceExprExample(phrase: string, rowIndex: number, example: Example) {
 	return phrase.replace(EXPRESSIONS.example, (column: string) => {
-		const columnName = EXPRESSIONS.example.exec(column) || [];
+		const columnName = EXPRESSIONS.example.exec(column);
 		let value = example.getValue(columnName[1], rowIndex);
 
 		if (!value?.startsWith('"')) {

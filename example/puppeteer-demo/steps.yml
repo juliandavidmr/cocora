@@ -1,0 +1,14 @@
+- Feature:
+    Name: Feature 1
+    Scenarios:
+    - Name: Scenario 1
+      Steps:
+      - Given: That I have gone to the Google page
+      - When: 'I add <Word> to the search box'
+      - And: click the Search Button
+      - Then: '<Word> should be mentioned in the results'
+      - Then: Close page
+      Examples: |
+        Word
+        Cats
+        Dogs
