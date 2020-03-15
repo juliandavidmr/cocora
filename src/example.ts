@@ -1,7 +1,10 @@
+/**
+ * @description Cache all input data in each scenario.
+ */
 export class Example {
 
-	rowsMap: Map<string, string[]> = new Map();
-	rowsLength = 1;
+	readonly rowsMap: Map<string, string[]> = new Map();
+	rowsLength = 1; // TODO: replace by rowsMap
 
 	constructor(str: string) {
 		this._initialize(str);

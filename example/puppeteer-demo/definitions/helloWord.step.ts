@@ -33,3 +33,7 @@ export const Metioned = Then('{string} should be mentioned in the results', {}, 
 export const ClosePage = Then('Close page', {}, async () => {
     await page.close();
 })
+
+export const Number = Then(/([0-9]{3,5})/, {}, async () => {
+    await page.close();
+})

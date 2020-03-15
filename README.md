@@ -1,5 +1,7 @@
 # Cocora
 
+> _In progress._ The first version will be released once Float, Int and Hooks are supported.
+
 Cocora is a lightweight tool written in Typescript that supports [Behavior Based Development (BDD)](https://en.wikipedia.org/wiki/Behavior-driven_development), a software development process that aims to improve software quality and reduce maintenance costs.
 
 Cocora is a modular system that allows you to declare and execute multiple scenarios with configurable steps.
@@ -96,6 +98,5 @@ Report
 - [ ] Support for Float and regular expressions
 - [ ] Support condditions
 - [x] Generate report
-- [ ] Hook support
-- [ ] Support extensions
+- [ ] Hooks support
 - [ ] Create CLI

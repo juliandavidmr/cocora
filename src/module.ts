@@ -7,18 +7,24 @@ import chalk from 'chalk';
 export function Module(params: ModuleConfig) {
 	params = { verbose: true, continueOnError: false, ...params };
 
-	const input = readYaml(params.stepsPath);
+	let input = readYaml(params.stepsPath);
 
-	// console.log(JSON.stringify(input))
+	if (!Array.isArray(input) || !input.length) {
+		console.warn(`Empty Yaml input`);
+		input = [];
+	}
 
-	return { run: () => run(input, params) };
+	return { run: () => runWrapper(input, params) };
 }
 
-async function run(features: Feature[], params: ModuleConfig) {
+async function runWrapper(features: Feature[], params: ModuleConfig) {
+	let featureIndex = 0;
+
 	for (const feature of features) {
 		let scenariosExecuted = 0;
 		let stepsExecuted = 0;
 		let examplesCount = 0;
+
 		try {
 			for (const Scenario of feature.Feature.Scenarios) {
 				scenariosExecuted++;
@@ -31,7 +37,7 @@ async function run(features: Feature[], params: ModuleConfig) {
 							let sentencePhrase = Step.Given || Step.Then || Step.When || Step.And || '';
 							sentencePhrase = replaceExprExample(sentencePhrase, i, ScenarioExample);
 							const currentDef = params.declarations.find(s => s.definition.test(sentencePhrase));
-	
+
 							if (currentDef) {
 								const params = getParameters(sentencePhrase, currentDef.definition);
 								await runFn(currentDef.cb, params?.slice(1) || [], { sentencePhrase });
@@ -46,7 +52,7 @@ async function run(features: Feature[], params: ModuleConfig) {
 									message += `Current Scenario: ${Scenario.Name || 'Not specified'}\n`
 								}
 								message += `No definition found for: ${sentencePhrase}`
-	
+
 								throw new Error(message);
 							}
 						} catch (error) {
@@ -63,7 +69,7 @@ async function run(features: Feature[], params: ModuleConfig) {
 			}
 		} finally {
 			const totalSteps = feature.Feature.Scenarios.map(s => s.Steps.length).reduce((a, b) => a + b)
-
+			
 			const report = {
 				scenariosExecuted,
 				stepsExecuted,
@@ -71,8 +77,10 @@ async function run(features: Feature[], params: ModuleConfig) {
 				success: ((totalSteps * examplesCount) - stepsExecuted) === 0
 			}
 
+			console.log('Report:', report);
+
 			if (params.verbose) {
-				console.info(chalk.underline('\nReport:'));
+				console.info(chalk.underline('\nResult:') + ' ' + feature.Feature?.Name || (featureIndex + 1));
 				console.info('- State:', report.success ? chalk.green('Success') : chalk.red('Fail'));
 				console.info('- Scenarios executed:', scenariosExecuted);
 				console.info('- Steps executed:', (stepsExecuted / examplesCount), `/`, totalSteps);
@@ -80,9 +88,17 @@ async function run(features: Feature[], params: ModuleConfig) {
 
 			return report;
 		}
+
+		featureIndex++;
 	}
 }
 
+/**
+ * Replace {exp} by a regex expression.
+ * @param phrase 
+ * @param rowIndex 
+ * @param example 
+ */
 function replaceExprExample(phrase: string, rowIndex: number, example: Example) {
 	return phrase.replace(EXPRESSIONS.example, (column: string) => {
 		const columnName = EXPRESSIONS.example.exec(column);
@@ -100,6 +116,11 @@ function replaceExprExample(phrase: string, rowIndex: number, example: Example) 
 	});
 }
 
+/**
+ * Get values from regex groups.
+ * @param definition 
+ * @param definitionSentence 
+ */
 function getParameters(definition: string, definitionSentence: RegExp): (string | number)[] {
 	const params = definitionSentence.exec(definition);
 	return params?.map(v => {

@@ -1,6 +1,6 @@
 import { SentenceReturn, SentenceConfig } from "./interfaces";
 
-export function Sentence(definition: string, config: SentenceConfig, cb: Function): SentenceReturn {
+export function Sentence(definition: string | RegExp, config: SentenceConfig, cb: Function): SentenceReturn {
     return { definition: String2RegExp(definition), config, cb }
 }
 
@@ -11,7 +11,11 @@ export const And = Sentence;
 
 /** ------------------- Utils -------------------- */
 
-function String2RegExp(str: string) {
+function String2RegExp(str: string | RegExp): RegExp {
+    if (str instanceof RegExp) {
+        return str;
+    }
+
     return new RegExp(translateParams(str));
 }
 
